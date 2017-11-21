@@ -55,6 +55,15 @@ fun main(args: Array<String>) {
     println("12.345-6.A".split(".","-"))
 
     parsePath("/Users/yole/kotlin-book/chapter.adoc")
+    parsePathByRegex("/Users/yole/kotlin-book/chapter.adoc")
+
+    // 多行三重引号的字符串
+    val kotlinLogo = """| //
+                       .|//
+                       .|/ \"""
+    println(kotlinLogo.trimMargin("."))
+
+
 }
 
 fun <T> joinTOString(collection: Collection<T>, separator: String = ", ", prefix: String = "", postfix: String = ""): String {
@@ -117,6 +126,16 @@ fun parsePath(path: String) {
     println("Dir: $directory, name: $fileName, ext: $extension")
 }
 
+// 使用正则表达式解析文件路径
+fun parsePathByRegex(path: String) {
+    // 三重引号，避免使用转义字符
+    val regex = """(.+)/(.+)\.(.+)""".toRegex()
+    val matchResult = regex.matchEntire(path)
+    if (matchResult != null) {
+        val (directory, fileName, extension) = matchResult.destructured
+        println("Dir: $directory, name: $fileName, ext: $extension")
+    }
+}
 
 
 
