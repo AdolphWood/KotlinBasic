@@ -3,6 +3,8 @@
 // 注解指定类名
 package com.kotlinInAction
 
+import javax.print.attribute.standard.MediaSize
+
 fun main(args: Array<String>) {
     // 在Kotlin中创建集合
     val set = hashSetOf(1, 7, 53)
@@ -45,8 +47,14 @@ fun main(args: Array<String>) {
     sb.lastChar = '!'
     println(sb)
 
+    // 中缀调用
+    val (number, name) = 1 to "one"
 
+    // 分割字符串
+    println("12.345-6.A".split("\\.|-".toRegex()))
+    println("12.345-6.A".split(".","-"))
 
+    parsePath("/Users/yole/kotlin-book/chapter.adoc")
 }
 
 fun <T> joinTOString(collection: Collection<T>, separator: String = ", ", prefix: String = "", postfix: String = ""): String {
@@ -95,7 +103,19 @@ var StringBuilder.lastChar: Char
         this.setCharAt(length - 1, value)
     }
 
+// 处理集合：可变参数、中缀调用和库的支持
 
+// 要允许使用中缀符号调用函数，需要使用infix修饰符来标记它
+infix fun Any.to(other: Any) = Pair(this, other)
+
+// 使用String的扩展函数来解析文件路径
+fun parsePath(path: String) {
+    val directory = path.substringBeforeLast("/")
+    val fullName = path.substringAfterLast("/")
+    val fileName = fullName.substringBeforeLast(".")
+    val extension = fullName.substringAfterLast(".")
+    println("Dir: $directory, name: $fileName, ext: $extension")
+}
 
 
 
