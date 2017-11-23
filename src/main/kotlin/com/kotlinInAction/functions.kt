@@ -3,8 +3,6 @@
 // 注解指定类名
 package com.kotlinInAction
 
-import javax.print.attribute.standard.MediaSize
-
 fun main(args: Array<String>) {
     // 在Kotlin中创建集合
     val set = hashSetOf(1, 7, 53)
@@ -52,7 +50,7 @@ fun main(args: Array<String>) {
 
     // 分割字符串
     println("12.345-6.A".split("\\.|-".toRegex()))
-    println("12.345-6.A".split(".","-"))
+    println("12.345-6.A".split(".", "-"))
 
     parsePath("/Users/yole/kotlin-book/chapter.adoc")
     parsePathByRegex("/Users/yole/kotlin-book/chapter.adoc")
@@ -97,11 +95,13 @@ open class View {
     open fun click() = println("View clicked")
 }
 
-class Button: View() {
+class Button : View() {
     override fun click() = println("Button clicked")
 }
+
 // 不能重写扩展函数
 fun View.showOff() = println("I'm a view!")
+
 fun Button.showOff() = println("I'm a button!")
 
 // 扩展属性
@@ -135,6 +135,53 @@ fun parsePathByRegex(path: String) {
         val (directory, fileName, extension) = matchResult.destructured
         println("Dir: $directory, name: $fileName, ext: $extension")
     }
+}
+
+// 局部函数和扩展
+class User(val id: Int, val name: String, val address: String)
+// 带重复代码的函数
+fun saveUser(user: User) {
+    if (user.name.isEmpty()) {
+        throw IllegalArgumentException("Can't save user ${user.id}: empty Name")
+    }
+    if (user.address.isEmpty()) {
+        throw IllegalArgumentException("Can't save user ${user.id}: empty Address")
+    }
+}
+// 提取局部函数来避免重复
+fun saveUser1(user: User) {
+    fun validate(user: User, value: String, fieldName: String) {
+        if (value.isEmpty()) {
+            throw IllegalArgumentException("Can't save user ${user.id}: empty $fieldName")
+        }
+    }
+    validate(user, user.name, "Name")
+    validate(user, user.address, "Address")
+}
+// 在局部函数中访问外层函数的参数
+fun saveUser2(user: User) {
+    fun validate(value: String, fieldName: String) {
+        if (value.isEmpty()) {
+            throw IllegalArgumentException("Can't save user ${user.id}: empty $fieldName")
+        }
+    }
+    validate(user.name, "Name")
+    validate(user.address, "Address")
+}
+// 提取逻辑到扩展函数
+fun User.validateBeforeSave() {
+    fun validate(value: String, fieldName: String) {
+        if (value.isEmpty()) {
+            throw IllegalArgumentException("Can't save user $id: empty $fieldName")     // 可直接访问User的属性
+        }
+    }
+    validate(name, "Name")
+    validate(address, "Address")
+}
+
+fun saveUser3(user: User) {
+    user.validateBeforeSave()
+
 }
 
 
